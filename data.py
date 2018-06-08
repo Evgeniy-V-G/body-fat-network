@@ -1,6 +1,9 @@
 import csv
 import numpy as np
 import os
+import random
+from math import floor
+from tempfile import TemporaryFile
 
 
 class DataBody():
@@ -8,11 +11,9 @@ class DataBody():
 	def __init__(self, experiment_name = 'default', input_file = 'bodyfat.csv' ,
 				 test_percent=0.2,height_unit = 'cm',weight_unit = 'kg'):
 		if os.path.exists(os.path.abspath('log/input/' + experiment_name + 
-						                  '.npy')):
-			experiment_data = np.load(os.path.abspath('log/input/' + 
-							                          experiment_name + '.npy'))
-			self.data_train = experiment_data['train']
-			self.data_test = experiment_data['test']
+										  '.npz')):
+			self.load_file(experiment_name)
+			print(self.data_test)
 		else:
 			self.experiment_name = experiment_name
 			self.input_file = input_file
@@ -23,13 +24,14 @@ class DataBody():
 			self.height_unit = height_unit
 			self.weight_unit = weight_unit
 			self.data_unit = self.unit_transformation(height_unit, weight_unit)
-			print(self.headers_raw)
-			print(self.data_unit[:,4])
-			'''									  
-											 
-			self.data_train, self.data_test = divide_train_test(test_percent)
+										 
+			self.data_train, self.data_test = self.divide_train_test(
+												   test_percent)
+												   	
+			print(self.data_test)
+
 			self.save_file(experiment_name)
-			'''			
+		
 			
 	###############
 	def read_csv(self, input_file):
@@ -49,7 +51,8 @@ class DataBody():
 		self.data_raw = np.resize(self.data_raw,[row_number,feature_number])
 		self.data_raw = self.data_raw.astype(np.float)
 		self.headers_raw = headers
-		
+	
+	###############	
 	def unit_transformation(self, height_target, weight_target,
 							height_original = 'inches', 
 							weight_original = 'lbs'):
@@ -59,7 +62,6 @@ class DataBody():
 		'''
 		# Initializing
 		data_unit = self.data_raw
-		print(data_unit.shape)
 		
 		# Height Transform		    
 		if height_original == 'inches':
@@ -81,6 +83,39 @@ class DataBody():
 		
 		return data_unit
 
-				
+	###############
+	def divide_train_test(self, test_percent):
+		data_size = self.data_unit.shape[0]
 		
-a = DataBody()	
+		test_size = floor(data_size*test_percent)
+		train_size = data_size - test_size
+		
+		np.random.shuffle(self.data_unit)
+		
+		data_train = self.data_unit[0:train_size,:]
+		data_test = self.data_unit[train_size:-1,:]
+		
+		return data_train, data_test
+	
+	###############	
+	def save_file(self,experiment_name):
+		outfile = os.path.abspath('log/input/' + experiment_name)
+		print(outfile)
+		np.savez(outfile,data_train=self.data_train,data_test = self.data_test,
+				 experiment_name = self.experiment_name, 
+				 input_file = self.input_file,
+				 height_unit = self.height_unit,
+				 weight_unit = self.weight_unit)
+	
+	###############			 
+	def load_file(self,experiment_name):
+		experiment_data = np.load(os.path.abspath('log/input/' + experiment_name 
+												  + '.npz'))
+		self.data_train = experiment_data['data_train']
+		self.data_test = experiment_data['data_test']
+		self.experiment_name = experiment_data['experiment_name']
+		self.input_file = experiment_data['input_file']
+		self.height_unit = experiment_data['height_unit']
+		self.weight_unit = experiment_data['weight_unit']
+	
+a = DataBody(experiment_name = 'defaultkk')	
