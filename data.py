@@ -13,7 +13,6 @@ class DataBody():
 		if os.path.exists(os.path.abspath('log/input/' + experiment_name + 
 										  '.npz')):
 			self.load_file(experiment_name)
-			print(self.data_test)
 		else:
 			self.experiment_name = experiment_name
 			self.input_file = input_file
@@ -27,8 +26,6 @@ class DataBody():
 										 
 			self.data_train, self.data_test = self.divide_train_test(
 												   test_percent)
-												   	
-			print(self.data_test)
 
 			self.save_file(experiment_name)
 		
@@ -100,12 +97,18 @@ class DataBody():
 	###############	
 	def save_file(self,experiment_name):
 		outfile = os.path.abspath('log/input/' + experiment_name)
-		print(outfile)
-		np.savez(outfile,data_train=self.data_train,data_test = self.data_test,
-				 experiment_name = self.experiment_name, 
-				 input_file = self.input_file,
-				 height_unit = self.height_unit,
-				 weight_unit = self.weight_unit)
+		
+		try:
+			np.savez(outfile,data_train=self.data_train,
+					 data_test = self.data_test,
+					 experiment_name = self.experiment_name, 
+					 input_file = self.input_file,
+					 height_unit = self.height_unit,
+					 weight_unit = self.weight_unit)
+			print('Saving:' + outfile + '.npz')
+		except OSError:
+			print("Saving Error")
+		
 	
 	###############			 
 	def load_file(self,experiment_name):
@@ -117,5 +120,7 @@ class DataBody():
 		self.input_file = experiment_data['input_file']
 		self.height_unit = experiment_data['height_unit']
 		self.weight_unit = experiment_data['weight_unit']
+		
+		print('Load Experiment: ' + str(self.experiment_name))
 	
-a = DataBody(experiment_name = 'defaultkk')	
+a = DataBody(experiment_name = 'defaultkkkkk')	
