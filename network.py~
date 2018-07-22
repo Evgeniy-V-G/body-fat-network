@@ -51,7 +51,7 @@ class BodyNetwork():
 		# Fidelity term
 		loss = tf.losses.log_loss(ground_truth, predictions)
 		loss = tf.Variable(10,dtype=tf.float32)
-		loss = tf.reduce_mean(ground_truth)
+		#loss = tf.reduce_mean(ground_truth-predictions)
 
 		# Regularisation term
 		#regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)

@@ -9,7 +9,7 @@ from tempfile import TemporaryFile
 class DataBody():
 	###############
 	def __init__(self, experiment_name = 'default', input_file = 'bodyfat.csv' ,
-				 test_percent=0.2, height_unit = 'cm', weight_unit = 'kg'):
+				 test_percent=0.2,height_unit = 'cm',weight_unit = 'kg'):
 		if os.path.exists(os.path.abspath('log/input/' + experiment_name + 
 										  '.npz')):
 			self.load_file(experiment_name)
@@ -123,4 +123,4 @@ class DataBody():
 		
 		print('Load Experiment: ' + str(self.experiment_name))
 	
-#a = DataBody(experiment_name = 'defaultkkkkk')	
+a = DataBody(experiment_name = 'defaultkkkkk')	

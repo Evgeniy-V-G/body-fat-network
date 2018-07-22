@@ -74,7 +74,7 @@ class InputBody():
 			# Start next epoch
 			start = 0
 			self._index_in_epoch = self.batch_size
-			assert self.batch_size <= self.num_examples
+			assert self.batch_size <= self._num_examples
 		end = self._index_in_epoch
 		
 		return inputs[start:end,:], outputs[start:end]
